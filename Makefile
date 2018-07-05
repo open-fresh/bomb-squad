@@ -32,13 +32,9 @@ version:
 	@echo BOMB SQUAD: $(BOMB_SQUAD_VERSION)
 
 $(BOMB_SQUAD_UPTODATE): $(BOMB_SQUAD_FILES)
+	GOOS=linux GOARCH=amd64 go build -o bin/bs -ldflags="-X main.promVersion=$(PROM_VERSION) -X main.promRulesVersion=$(PROM_RULES_VERSION) -X main.version=$(BOMB_SQUAD_VERSION)" .
 	docker build \
-	  --build-arg PROM_VERSION=$(PROM_VERSION) \
-		--build-arg PROM_RULES_VERSION=$(PROM_RULES_VERSION) \
-		--build-arg BOMB_SQUAD_VERSION=$(BOMB_SQUAD_VERSION) \
-		--file $(BOMB_SQUAD_DIR)/Dockerfile \
-		--tag $(BOMB_SQUAD_IMG) \
-		. \
+		--tag $(BOMB_SQUAD_IMG) . \
 		&& touch $(BOMB_SQUAD_UPTODATE)
 
 build: $(BOMB_SQUAD_UPTODATE) ## Docker-based build of relevant exes
