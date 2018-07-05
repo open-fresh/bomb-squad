@@ -22,8 +22,13 @@ local cm =
   configMap.new(
     params.name
   )
-  + configMap.withDataMixin({ 'prometheus.yml': params.promConfig })
-  + configMap.withDataMixin({ 'rules.yml': params.promRules });
+  + configMap.withData(
+    {
+      'prometheus.yml': importstr 'prometheus/prometheus.yml',
+      'rules.yml': importstr 'prometheus/rules.yml',
+    },
+  );
+//  + configMap.withDataMixin({ 'rules.yml': params.promRules });
 
 local dataVolumeMount = {
   name: 'prom-data',

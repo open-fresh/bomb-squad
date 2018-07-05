@@ -7,7 +7,7 @@ params {
       imageTag: '4c8913e',
     },
     'bomb-squad'+: {
-      imageTag: '57c2ff3',
+      imageTag: 'ce19df1',
     },
   },
 }

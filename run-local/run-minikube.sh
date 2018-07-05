@@ -20,7 +20,7 @@ function buildBS() {
   ${MK} profile ${MK_PROFILE}
   eval "$(${MK} docker-env)"
   set -e
-  make clean
+  #make clean
   make
   set -e
   popd > /dev/null

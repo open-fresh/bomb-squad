@@ -32,12 +32,12 @@ func (c *ConfigMap) Init() {
 // ReadRawData pulls in value from the `data` key in the ConfigMap as-is
 func (c *ConfigMap) ReadRawData(ctx context.Context, key string) *string {
 	//var configMap corev1.ConfigMap
-	var s *string
+	var s = ""
 
 	//	err := c.Client.Get(ctx, c.Namespace, c.Name, &configMap)
 	//	if err != nil {
 	//		log.Fatal(err)
 	//	}
 	//	s := configMap.Data[key]
-	return s
+	return &s
 }
