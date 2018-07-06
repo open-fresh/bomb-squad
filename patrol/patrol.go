@@ -7,7 +7,7 @@ import (
 
 	"github.com/Fresh-Tracks/bomb-squad/configmap"
 	"github.com/Fresh-Tracks/bomb-squad/prom"
-	promcfg "github.com/prometheus/prometheus/config"
+	promcfg "github.com/Fresh-Tracks/bomb-squad/prom/config"
 )
 
 var (
