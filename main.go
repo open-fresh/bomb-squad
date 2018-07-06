@@ -9,6 +9,7 @@ import (
 
 	"github.com/Fresh-Tracks/bomb-squad/configmap"
 	"github.com/Fresh-Tracks/bomb-squad/patrol"
+	"github.com/Fresh-Tracks/bomb-squad/prom"
 	"github.com/Fresh-Tracks/bomb-squad/util"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -41,6 +42,11 @@ var (
 
 func init() {
 	prometheus.MustRegister(versionGauge)
+}
+
+func bootstrap(ctx context.Context, cm configmap.ConfigMap) {
+	//prom.InsertRuleFile("foo.yaml")
+	prom.GetPrometheusConfig(ctx, cm)
 }
 
 func main() {
@@ -84,6 +90,7 @@ func main() {
 		ConfigMap:         &cm,
 	}
 
+	bootstrap(ctx, cm)
 	go p.Run()
 
 	mux := http.DefaultServeMux
