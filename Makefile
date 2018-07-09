@@ -46,7 +46,7 @@ run-bomb-squad: ## Run local bomb-squad image. To pass args, use `make run-bomb-
 all: build ## Build all the things
 
 clean: ## Remove binaries and docker images
-	rm -f $(BOMB_SQUAD_UPTODATE)
+	rm -f $(BOMB_SQUAD_UPTODATE) $(BOMB_SQUAD_DIR)/bin/bs
 	@docker rmi --force $(IMAGE_NAME) 2>/dev/null
 
 help: ## This help text
