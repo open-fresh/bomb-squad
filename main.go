@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 
@@ -21,18 +22,16 @@ var (
 	promRulesVersion = "undefined"
 	metricsPort      = flag.Int("metrics-port", 8080, "Port on which to listen for metric scrapes")
 	promURL          = flag.String("prom-url", "http://localhost:9090", "Prometheus URL to query")
-	cmNamespace      = flag.String("configmap-namespace", "default", "Namespace that holds the Prometheus ConfigMap")
 	cmName           = flag.String("configmap-name", "prometheus", "Name of the Prometheus ConfigMap")
 	cmKey            = flag.String("configmap-prometheus-key", "prometheus.yml", "The key in the ConfigMap that holds the main Prometheus config")
 	getVersion       = flag.Bool("version", false, "return version information and exit")
 	versionGauge     = prometheus.NewGauge(
 		prometheus.GaugeOpts{
-			Namespace: "ft_agent",
-			Subsystem: "version",
+			Namespace: "bomb_squad",
 			Name:      "details",
-			Help:      "Static series that tracks the current schema version in use by the FreshTracks Agent",
+			Help:      "Static series that tracks the current versions of all the things in Bomb Squad",
 			ConstLabels: map[string]string{
-				"bomb_squad_version":       version,
+				"version":                  version,
 				"prometheus_version":       promVersion,
 				"prometheus_rules_version": promRulesVersion,
 			},
@@ -42,11 +41,19 @@ var (
 
 func init() {
 	prometheus.MustRegister(versionGauge)
+	prometheus.MustRegister(patrol.ExplodingLabelGauge)
 }
 
-func bootstrap(ctx context.Context, cm configmap.ConfigMap) {
-	//prom.InsertRuleFile("foo.yaml")
-	prom.GetPrometheusConfig(ctx, cm)
+func bootstrap(ctx context.Context, c configmap.ConfigMap) {
+	// TODO: Don't do this file write if the file already exists, but DO write the file
+	// if it's not present on disk but still present in the ConfigMap
+	b, err := ioutil.ReadFile("/etc/bomb-squad/rules.yaml")
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = ioutil.WriteFile("/etc/config/bomb-squad/rules.yaml", b, 0644)
+
+	prom.AppendRuleFile(ctx, "/etc/config/bomb-squad/rules.yaml", c)
 }
 
 func main() {
@@ -73,13 +80,12 @@ func main() {
 
 	ctx := context.Background()
 	cm := configmap.ConfigMap{
-		Namespace:   *cmNamespace,
 		Name:        *cmName,
 		Key:         *cmKey,
 		LastUpdated: 0,
 		Ctx:         ctx,
 	}
-	cm.Init()
+	cm.Init(ctx)
 
 	p := patrol.Patrol{
 		PromURL:           *promURL,

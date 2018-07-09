@@ -1,0 +1,6 @@
+groups:
+- name: bomb_squad_card_counter
+  interval: 10s
+  rules:
+  - record: card_count
+    expr: label_replace( count by(__name__) ({__name__!="", __name__!="card_count"}), "metric_name", "$1", "__name__", "(.+)" )

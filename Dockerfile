@@ -17,5 +17,6 @@
 FROM alpine:3.7
 
 COPY ./bin/bs /bin/bs
+COPY ./prom_rules.yaml /etc/bomb-squad/rules.yaml
 
 ENTRYPOINT ["/bin/bs"]

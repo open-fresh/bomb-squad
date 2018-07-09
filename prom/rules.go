@@ -2,7 +2,6 @@ package prom
 
 import (
 	"context"
-	"fmt"
 	"log"
 
 	"github.com/Fresh-Tracks/bomb-squad/configmap"
@@ -10,23 +9,38 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
-func GetPrometheusConfig(ctx context.Context, cm configmap.ConfigMap) {
+// GetPrometheusConfig pulls in the full base Prometheus config
+// from the provided ConfigMap. Does not include rules nor AM configs.
+func GetPrometheusConfig(ctx context.Context, c configmap.ConfigMap) promcfg.Config {
+	raw := c.ReadRawData(ctx, c.Key)
 	var cfg promcfg.Config
-	raw := cm.ReadRawData(ctx, cm.Key)
 	err := yaml.Unmarshal(raw, &cfg)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	fmt.Printf("UNMARSHALED PROM CFG:\n%+v\n", cfg)
-	fmt.Printf("\nSCRAPE CONFIGS:\n%s\n", cfg.ScrapeConfigs)
-
-	// Re-marshal to see what we get
-	b, err := yaml.Marshal(cfg)
-	fmt.Printf("\nREMARSHALLED CONFIG:\n%s\n", b)
+	return cfg
 }
 
-func InsertRuleFile(ctx context.Context, filename string, cm configmap.ConfigMap) {
-	//ruleFiles := ConfigGetRuleFiles()
-	//fmt.Printf("RULE FILES:\n%s\n", ruleFiles)
+// AppendRuleFile Appends a static rule file that Bomb Squad needs into the
+// array of rule files that may exist in the current Prometheus config
+func AppendRuleFile(ctx context.Context, filename string, c configmap.ConfigMap) error {
+	cfg := GetPrometheusConfig(ctx, c)
+	configRuleFiles := cfg.RuleFiles
+	ruleFileFound := false
+
+	for _, f := range configRuleFiles {
+		if f == filename {
+			ruleFileFound = true
+		}
+	}
+
+	if !ruleFileFound {
+		newRuleFiles := append(configRuleFiles, filename)
+		cfg.RuleFiles = newRuleFiles
+		err := c.Update(ctx, cfg)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }

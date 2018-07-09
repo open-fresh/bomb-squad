@@ -34,13 +34,6 @@ local appDeployment =
     labels
   )
   .withTerminationGracePeriodSeconds(1);
-//  + deployment.mixin.spec.template.spec.withVolumes([
-//    {
-//      name: 'prom-cfg',
-//      configMap: {
-//        name: params.name,
-//      },
-//    },
-//    ]);
 
-k.core.v1.list.new([bombSquadService, appDeployment])
+//k.core.v1.list.new([bombSquadService, appDeployment])
+k.core.v1.list.new([])

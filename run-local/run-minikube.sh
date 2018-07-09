@@ -31,7 +31,7 @@ function buildSS() {
   ${MK} profile ${MK_PROFILE}
   eval "$(${MK} docker-env)"
   set -e
-  go build -o ss
+  GOOS=linux GOARCH=amd64 go build -o ss
   docker build -t ss:latest .
   set -e
   popd > /dev/null
@@ -58,3 +58,6 @@ kubectl config use-context bomb-squad
 ks param set bomb-squad imageTag ${SHORT_SHA} --env=minikube
 ${KS} apply --insecure-skip-tls-verify minikube 
 popd > /dev/null
+
+#kubectl delete pod -l app=bomb-squad 2> /dev/null
+docker rm -f $(docker ps | grep /bin/bs | awk '{ print $1 }')

@@ -9,6 +9,18 @@ import (
 
 	"github.com/Fresh-Tracks/bomb-squad/prom"
 	"github.com/deckarep/golang-set"
+	"github.com/prometheus/client_golang/prometheus"
+)
+
+var (
+	ExplodingLabelGauge = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Namespace: "bomb_squad",
+			Name:      "exploding_label_distinct_values",
+			Help:      "Track which series have been identified as having exploding cardinality",
+		},
+		[]string{"metric_name", "label_name"},
+	)
 )
 
 // lValues is a simple map that holds all discrete label values for a given
@@ -30,7 +42,6 @@ func (p *Patrol) getTopCardinalities() error {
 
 	m := p.cardinalityTooHigh(iq)
 	if len(m) > 0 {
-		fmt.Println("Cardinality is too high! Attempting to identify which series are problematic...")
 		_ = p.findHighCardSeries(m)
 	}
 
@@ -49,7 +60,6 @@ func (p *Patrol) cardinalityTooHigh(iq *prom.InstantQuery) []string {
 
 		if f >= p.HighCardThreshold {
 			out = append(out, m)
-			fmt.Printf("metric_name: %s --- %f\n", m, f)
 		}
 	}
 	return out
@@ -151,7 +161,8 @@ func (p *Patrol) findHighCardSeries(metrics []string) *[]prom.Series {
 				hwmLabel = label
 			}
 		}
-		fmt.Printf("Exploding label: %s --- Distinct Values: %d\n", hwmLabel, hwm)
+		ExplodingLabelGauge.WithLabelValues(metricName, hwmLabel).Set(float64(hwm))
+
 		// p.tryToFindStableValues(metricName, hwmLabel, tracker[hwmLabel])
 	}
 
