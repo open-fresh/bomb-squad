@@ -5,9 +5,14 @@ package config
 // all things Prometheus config related
 
 import (
+	"encoding/base64"
+	"fmt"
+	"log"
 	"net/url"
 	"regexp"
 	"time"
+
+	yaml "gopkg.in/yaml.v2"
 )
 
 // Config is a lean version of a Prometheus config, containing only
@@ -73,6 +78,26 @@ type RelabelConfig struct {
 	Replacement string `yaml:"replacement,omitempty"`
 	// Action is the action to be performed for the relabeling.
 	Action string `yaml:"action,omitempty"`
+}
+
+// ReUnmarshal simply marshals a RelabelConfig and unmarshals it again back into place.
+// This is needed to accomodate an "expansion", if you will, of the prometheus.config
+// Regexp struct's string representation that happens only upon unmarshalling it.
+// TODO: (TODON'T?) Instead of this, figure out the unmarshalling quirk and change it
+func (rc *RelabelConfig) ReUnmarshal() {
+	s, err := yaml.Marshal(rc)
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = yaml.Unmarshal(s, rc)
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func (rc *RelabelConfig) Encode() string {
+	s := fmt.Sprintf("%s", rc)
+	return base64.StdEncoding.EncodeToString([]byte(s))
 }
 
 func ConfigGetRuleFiles() []string {

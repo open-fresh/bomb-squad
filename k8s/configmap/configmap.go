@@ -2,7 +2,6 @@ package configmap
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"time"
 
@@ -21,6 +20,9 @@ type ConfigMap struct {
 	LastUpdated time.Duration
 	Ctx         context.Context
 }
+
+// By most accounts, this type of error can be ignored. Let's hope that's true.
+const optimisticMergeConflictError = "kubernetes api: Failure 409 Operation cannot be fulfilled on configmaps \"prometheus\": the object has been modified; please apply your changes to the latest version and try again"
 
 // Init just tries to get a K8s client created, and if it can't, bail
 func (c *ConfigMap) Init(ctx context.Context) {
@@ -51,7 +53,11 @@ func (c *ConfigMap) ReadRawData(ctx context.Context, key string) []byte {
 	}
 	c.CM = &cm
 
-	return []byte(c.CM.Data[key])
+	if res, ok := c.CM.Data[key]; !ok {
+		return []byte{}
+	} else {
+		return []byte(res)
+	}
 }
 
 func (c *ConfigMap) Update(ctx context.Context, cfg promcfg.Config) error {
@@ -61,10 +67,23 @@ func (c *ConfigMap) Update(ctx context.Context, cfg promcfg.Config) error {
 	}
 
 	c.CM.Data[c.Key] = string(b)
-	if err := c.Client.Update(ctx, c.CM); err != nil {
-		return err
+	err = c.UpdateWithRetries(5)
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	fmt.Println("Successfully updated ConfigMap")
 	return nil
+}
+
+func (c *ConfigMap) UpdateWithRetries(retries int) error {
+	var err error
+
+	for tries := 1; tries <= retries; tries++ {
+		if err = c.Client.Update(c.Ctx, c.CM); err != nil && err.Error() != optimisticMergeConflictError {
+			time.Sleep(1 * time.Second)
+		} else {
+			return nil
+		}
+	}
+	return err
 }

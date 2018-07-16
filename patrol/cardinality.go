@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/Fresh-Tracks/bomb-squad/prom"
+	promcfg "github.com/Fresh-Tracks/bomb-squad/prom/config"
 	"github.com/deckarep/golang-set"
 	"github.com/prometheus/client_golang/prometheus"
 )
@@ -28,7 +29,9 @@ var (
 type labelTracker map[string]mapset.Set
 
 func (p *Patrol) getTopCardinalities() error {
+	var highCardSeries []promcfg.HighCardSeries
 	urlString := fmt.Sprintf("http://%s/api/v1/query?query=topk(%d,delta(card_count[1m]))", p.PromURL, p.HighCardN)
+
 	b, err := prom.Fetch(urlString, p.Client)
 	if err != nil {
 		return err
@@ -42,7 +45,21 @@ func (p *Patrol) getTopCardinalities() error {
 
 	m := p.cardinalityTooHigh(iq)
 	if len(m) > 0 {
-		_ = p.findHighCardSeries(m)
+		highCardSeries = p.findHighCardSeries(m)
+	}
+
+	for _, s := range highCardSeries {
+		mrc := promcfg.GenerateMetricRelabelConfig(s)
+		mrc.ReUnmarshal()
+
+		newPromConfig := p.InsertMetricRelabelConfigToPromConfig(mrc)
+
+		err := p.ConfigMap.Update(p.Ctx, newPromConfig)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		p.StoreMetricRelabelConfigBombSquad(s, mrc)
 	}
 
 	return nil
@@ -123,7 +140,7 @@ func (p *Patrol) tryToFindStableValues(metric, label string, currentSet mapset.S
 	return earlierSet
 }
 
-func (p *Patrol) findHighCardSeries(metrics []string) *[]prom.Series {
+func (p *Patrol) findHighCardSeries(metrics []string) []promcfg.HighCardSeries {
 	hwmLabel := ""
 	var (
 		s      prom.Series
@@ -131,6 +148,7 @@ func (p *Patrol) findHighCardSeries(metrics []string) *[]prom.Series {
 		hwm, l int
 		err    error
 	)
+	res := []promcfg.HighCardSeries{}
 
 	for _, metricName := range metrics {
 		urlString := fmt.Sprintf("http://%s/api/v1/series?match[]=%s", p.PromURL, metricName)
@@ -161,10 +179,16 @@ func (p *Patrol) findHighCardSeries(metrics []string) *[]prom.Series {
 				hwmLabel = label
 			}
 		}
-		ExplodingLabelGauge.WithLabelValues(metricName, hwmLabel).Set(float64(hwm))
 
-		// p.tryToFindStableValues(metricName, hwmLabel, tracker[hwmLabel])
+		res = append(res,
+			promcfg.HighCardSeries{
+				MetricName:        metricName,
+				HighCardLabelName: hwmLabel,
+			},
+		)
+		fmt.Printf("Detected exploding label \"%s\" on metric \"%s\"\n", hwmLabel, metricName)
+		ExplodingLabelGauge.WithLabelValues(metricName, hwmLabel).Set(float64(hwm))
 	}
 
-	return &[]prom.Series{}
+	return res
 }

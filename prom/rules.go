@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/Fresh-Tracks/bomb-squad/configmap"
+	configmap "github.com/Fresh-Tracks/bomb-squad/k8s/configmap"
 	promcfg "github.com/Fresh-Tracks/bomb-squad/prom/config"
 	yaml "gopkg.in/yaml.v2"
 )
