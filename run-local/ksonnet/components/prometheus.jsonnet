@@ -8,7 +8,7 @@ local containerPort = container.portsType;
 local service = k.core.v1.service;
 local servicePort = k.core.v1.service.mixin.spec.portsType;
 local configMap = k.core.v1.configMap;
-local labels = { app: params.name };
+local labels = { app: params.name, sidecar: 'bomb-squad' };
 
 local prometheusService =
   service.new(

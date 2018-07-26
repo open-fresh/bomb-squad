@@ -11,6 +11,7 @@ import (
 	configmap "github.com/Fresh-Tracks/bomb-squad/k8s/configmap"
 	"github.com/Fresh-Tracks/bomb-squad/prom"
 	promcfg "github.com/Fresh-Tracks/bomb-squad/prom/config"
+	"github.com/Fresh-Tracks/bomb-squad/util"
 	yaml "gopkg.in/yaml.v2"
 )
 
@@ -113,7 +114,20 @@ func (p *Patrol) RemoveSilence(label string) error {
 	p.ConfigMap.CM.Data[p.ConfigMap.Key] = string(promConfigBytes)
 	p.ConfigMap.UpdateWithRetries(5)
 
+	resetMetric(metricName, labelName)
+
 	return nil
+}
+
+func resetMetric(metricName, labelName string) {
+	client, _ := util.HttpClient()
+	endpt := fmt.Sprintf("http://localhost:8080/metrics/reset?metric=%s&label=%s", metricName, labelName)
+	req, _ := http.NewRequest("GET", endpt, nil)
+
+	_, err := client.Do(req)
+	if err != nil {
+		log.Println("Failed to reset metric for %s.%s. Not urgent - continuing.", err)
+	}
 }
 
 func (p *Patrol) StoreMetricRelabelConfigBombSquad(s promcfg.HighCardSeries, mrc promcfg.RelabelConfig) {
@@ -168,4 +182,14 @@ func (p *Patrol) InsertMetricRelabelConfigToPromConfig(rc promcfg.RelabelConfig)
 		}
 	}
 	return promConfig
+}
+
+func MetricResetHandler() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		metricName := req.URL.Query().Get("metric")
+		labelName := req.URL.Query().Get("label")
+		fmt.Printf("Resetting metrics for %s.%s\n", metricName, labelName)
+
+		ExplodingLabelGauge.WithLabelValues(metricName, labelName).Set(float64(0.))
+	})
 }

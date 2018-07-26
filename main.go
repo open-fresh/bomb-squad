@@ -114,6 +114,7 @@ func main() {
 
 	mux := http.DefaultServeMux
 	mux.Handle("/metrics", promhttp.Handler())
+	mux.Handle("/metrics/reset", patrol.MetricResetHandler())
 	versionGauge.Set(1.0)
 
 	server := &http.Server{
