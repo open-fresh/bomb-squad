@@ -10,5 +10,4 @@ echo "Deleting ksonnet bits from minikube environment..."
 pushd ${SCRIPT_DIR}/ksonnet > /dev/null
 kubectl config use-context bomb-squad
 ${KS} delete --insecure-skip-tls-verify minikube 
-git checkout app.yaml
 popd > /dev/null

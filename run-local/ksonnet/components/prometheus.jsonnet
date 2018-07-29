@@ -26,7 +26,6 @@ local cm =
   + configMap.withData(
     {
       'prometheus.yml': importstr 'prometheus/prometheus.yml',
-      //'rules.yml': importstr 'prometheus/rules.yml',
     },
   );
 
@@ -36,23 +35,26 @@ local dataVolumeMount = {
   readOnly: false,
 };
 
+local bombSquadContainer =
+  container
+  .new('bomb-squad', bs.image + ':' + bs.imageTag)
+  .withPorts(containerPort.new(bs.containerPort))
+  .withArgs(['-prom-url=localhost:9090'])
+  .withImagePullPolicy('Never')
+  .withVolumeMounts([
+    {
+      name: 'bomb-squad-rules',
+      mountPath: '/etc/config/bomb-squad',
+      readOnly: false,
+    },
+  ]);
+
 local appDeployment =
   deployment.new(
     params.name,
     params.replicas,
     [
-      container
-      .new('bomb-squad', bs.image + ':' + bs.imageTag)
-      .withPorts(containerPort.new(bs.containerPort))
-      .withArgs(['-prom-url=localhost:9090'])
-      .withImagePullPolicy('Never')
-      .withVolumeMounts([
-        {
-          name: 'bomb-squad-rules',
-          mountPath: '/etc/config/bomb-squad',
-          readOnly: false,
-        },
-      ]),
+      bombSquadContainer,
       container
       .new('prometheus', params.promImage)
       .withArgs([

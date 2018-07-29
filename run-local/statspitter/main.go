@@ -38,7 +38,9 @@ func run(intervalMs int) {
 		for i := 1; i <= 10; i++ {
 			testGaugeVec.WithLabelValues("stable", fmt.Sprintf("static_%s", strconv.Itoa(i))).Set(0.)
 			if explodeCardinalty == 1 {
-				testGaugeVec.WithLabelValues("exploding", fmt.Sprintf("boom_%s", time.Now().String())).Set(0.)
+				for j := 1; j <= 10; j++ {
+					testGaugeVec.WithLabelValues("exploding", fmt.Sprintf("boom_%s", time.Now().String())).Set(0.)
+				}
 			}
 		}
 		testGaugeVec.WithLabelValues("stable", "I'm_so_stable!").Set(0.)

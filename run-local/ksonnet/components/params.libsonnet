@@ -2,11 +2,20 @@
   global: {
   },
   components: {
-    ss: {
+    grafana: {
+      containerPort: 3000,
+      image: 'grafana/grafana',
+      name: 'grafana',
+      replicas: 1,
+      servicePort: 80,
+      nodePort: 31003,
+      type: 'NodePort',
+    },
+    statspitter: {
       containerPort: 8090,
       image: 'ss',
-      name: 'ss',
-      replicas: 1,
+      name: 'statspitter',
+      replicas: 0,
       servicePort: 80,
       nodePort: 31001,
       type: 'NodePort',
