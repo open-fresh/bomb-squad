@@ -30,6 +30,7 @@ type labelTracker map[string]mapset.Set
 
 func (p *Patrol) getTopCardinalities() error {
 	var highCardSeries []promcfg.HighCardSeries
+	var newRulesInserted = false
 	urlString := fmt.Sprintf("http://%s/api/v1/query?query=topk(%d,delta(card_count[1m]))", p.PromURL, p.HighCardN)
 
 	b, err := prom.Fetch(urlString, p.Client)
@@ -52,7 +53,7 @@ func (p *Patrol) getTopCardinalities() error {
 		mrc := promcfg.GenerateMetricRelabelConfig(s)
 		mrc.ReUnmarshal()
 
-		newPromConfig := p.InsertMetricRelabelConfigToPromConfig(mrc)
+		newPromConfig := p.InsertMetricRelabelConfigToPromConfig(mrc, &newRulesInserted)
 
 		err := p.ConfigMap.Update(p.Ctx, newPromConfig)
 		if err != nil {
@@ -60,6 +61,11 @@ func (p *Patrol) getTopCardinalities() error {
 		}
 
 		p.StoreMetricRelabelConfigBombSquad(s, mrc)
+	}
+
+	// Don't reload Prometheus config over and over, it's unnecessary
+	if newRulesInserted {
+		_ = prom.ReloadConfig(*p.Client)
 	}
 
 	return nil

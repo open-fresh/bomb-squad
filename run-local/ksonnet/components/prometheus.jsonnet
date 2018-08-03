@@ -54,7 +54,6 @@ local appDeployment =
     params.name,
     params.replicas,
     [
-      bombSquadContainer,
       container
       .new('prometheus', params.promImage)
       .withArgs([
@@ -83,20 +82,7 @@ local appDeployment =
         },
         dataVolumeMount,
       ]),
-      container
-      .new('config-reload', 'jimmidyson/configmap-reload:v0.1')
-      .withArgs([
-        '--volume-dir=/etc/config',
-        '--webhook-url=http://localhost:9090/-/reload',
-      ])
-      .withImagePullPolicy('IfNotPresent')
-      .withVolumeMounts([
-        {
-          name: 'prom-cfg',
-          mountPath: '/etc/config',
-          readOnly: true,
-        },
-      ]),
+      bombSquadContainer,
     ],
     labels
   )

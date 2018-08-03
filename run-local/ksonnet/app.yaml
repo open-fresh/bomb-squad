@@ -3,7 +3,7 @@ environments:
   minikube:
     destination:
       namespace: default
-      server: https://192.168.99.105:8443
+      server: https://192.168.99.100:8443
     k8sVersion: v1.9.4
     path: minikube
 kind: ksonnet.io/app
