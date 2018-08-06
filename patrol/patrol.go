@@ -136,13 +136,15 @@ func resetMetric(metricName, labelName string) {
 	}
 }
 
-func (p *Patrol) StoreMetricRelabelConfigBombSquad(s promcfg.HighCardSeries, mrc promcfg.RelabelConfig) {
+func (p *Patrol) InsertMetricRelabelConfigBombSquad(s promcfg.HighCardSeries, mrc promcfg.RelabelConfig) error {
 	b := p.GetBombSquadConfig()
 	if lc, ok := b.SuppressedMetrics[s.MetricName]; ok {
+		log.Println("Silencing rule already exists in bomb-squad config")
 		lc[s.HighCardLabelName] = mrc.Encode()
 	} else {
-		b.SuppressedMetrics[s.MetricName] = lc
+		log.Println("Silencing rule DOES NOT exist in bomb-squad config")
 		lc = BombSquadLabelConfig{}
+		b.SuppressedMetrics[s.MetricName] = lc
 		lc[s.HighCardLabelName] = mrc.Encode()
 	}
 
@@ -154,8 +156,9 @@ func (p *Patrol) StoreMetricRelabelConfigBombSquad(s promcfg.HighCardSeries, mrc
 	p.ConfigMap.CM.Data["bomb-squad.yaml"] = string(res)
 	err = p.ConfigMap.UpdateWithRetries(5)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
+	return nil
 }
 
 func DeleteRelabelConfigFromArray(arr []*promcfg.RelabelConfig, index int) []*promcfg.RelabelConfig {

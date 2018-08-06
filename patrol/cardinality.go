@@ -60,11 +60,14 @@ func (p *Patrol) getTopCardinalities(filename string) error {
 
 		// Don't churn on ConfigMap updates
 		if newRulesInserted {
-			err := p.ConfigMap.Update(p.Ctx, newPromConfig)
+			err := p.InsertMetricRelabelConfigBombSquad(s, mrc)
 			if err != nil {
 				log.Fatal(err)
 			}
-			p.StoreMetricRelabelConfigBombSquad(s, mrc)
+			err = p.ConfigMap.Update(p.Ctx, newPromConfig)
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
 
 		// Store metric relabel config structs for use in config reload validation later
