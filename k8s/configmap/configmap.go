@@ -77,10 +77,29 @@ func (c *ConfigMap) Update(ctx context.Context, cfg promcfg.Config) error {
 
 func (c *ConfigMap) UpdateWithRetries(retries int) error {
 	var err error
+	var newCM corev1.ConfigMap
+	err = nil
 
+	log.Println("Updating ConfigMap")
 	for tries := 1; tries <= retries; tries++ {
-		if err = c.Client.Update(c.Ctx, c.CM); err != nil && err.Error() != optimisticMergeConflictError {
-			time.Sleep(1 * time.Second)
+		err = c.Client.Update(c.Ctx, c.CM)
+		if err != nil && err.Error() == optimisticMergeConflictError {
+			log.Println("Retrying ConfigMap Update")
+			log.Println("Error type is optimisticMergeConflictError")
+			err := c.Client.Get(c.Ctx, c.Client.Namespace, c.Name, &newCM)
+			if err != nil {
+				return err
+			}
+
+			newResourceVersion := newCM.Metadata.GetResourceVersion()
+			log.Printf("newResourceVersion: %s\n", newResourceVersion)
+			err = c.Client.Update(c.Ctx, c.CM, k8s.ResourceVersion(newResourceVersion))
+			if err != nil {
+				log.Fatal(err)
+			}
+		} else if err != nil {
+			log.Println("Error type is NOT optimisticMergeConflictError")
+			return err
 		} else {
 			return nil
 		}

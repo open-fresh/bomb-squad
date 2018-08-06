@@ -36,10 +36,10 @@ type BombSquadMetricConfig struct {
 	SuppressedMetrics map[string]BombSquadLabelConfig
 }
 
-func (p *Patrol) Run() {
+func (p *Patrol) Run(filename string) {
 	ticker := time.NewTicker(time.Duration(p.Interval) * time.Second)
 	for _ = range ticker.C {
-		err := p.getTopCardinalities()
+		err := p.getTopCardinalities(filename)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -88,10 +88,10 @@ func (p *Patrol) RemoveSilence(label string) error {
 	bsRelabelConfigEncoded := bsCfg.SuppressedMetrics[metricName][labelName]
 
 	for _, scrapeConfig := range promConfig.ScrapeConfigs {
-		i := p.FindRelabelConfigInScrapeConfig(bsRelabelConfigEncoded, *scrapeConfig)
+		i := promcfg.FindRelabelConfigInScrapeConfig(bsRelabelConfigEncoded, *scrapeConfig)
 		if i >= 0 {
 			scrapeConfig.MetricRelabelConfigs = DeleteRelabelConfigFromArray(scrapeConfig.MetricRelabelConfigs, i)
-			fmt.Printf("Deleted silence rule from ScrapeConfig %s\n", scrapeConfig.JobName)
+			log.Printf("Deleted silence rule from ScrapeConfig %s\n", scrapeConfig.JobName)
 			rulesDeleted = true
 		}
 	}
@@ -168,22 +168,12 @@ func DeleteRelabelConfigFromArray(arr []*promcfg.RelabelConfig, index int) []*pr
 	return res
 }
 
-func (p *Patrol) FindRelabelConfigInScrapeConfig(encodedRule string, scrapeConfig promcfg.ScrapeConfig) int {
-	for i, relabelConfig := range scrapeConfig.MetricRelabelConfigs {
-		if relabelConfig.Encode() == encodedRule {
-			return i
-		}
-	}
-
-	return -1
-}
-
 func (p *Patrol) InsertMetricRelabelConfigToPromConfig(rc promcfg.RelabelConfig, newRulesInserted *bool) promcfg.Config {
 	promConfig := prom.GetPrometheusConfig(p.Ctx, *p.ConfigMap)
 	rcEncoded := rc.Encode()
 	for _, scrapeConfig := range promConfig.ScrapeConfigs {
-		if p.FindRelabelConfigInScrapeConfig(rcEncoded, *scrapeConfig) == -1 {
-			fmt.Printf("Did not find necessary silence rule in ScrapeConfig %s, adding now\n", scrapeConfig.JobName)
+		if promcfg.FindRelabelConfigInScrapeConfig(rcEncoded, *scrapeConfig) == -1 {
+			log.Printf("Did not find necessary silence rule in ScrapeConfig %s, adding now\n", scrapeConfig.JobName)
 			scrapeConfig.MetricRelabelConfigs = append(scrapeConfig.MetricRelabelConfigs, &rc)
 			*newRulesInserted = true
 		}
@@ -195,7 +185,7 @@ func MetricResetHandler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		metricName := req.URL.Query().Get("metric")
 		labelName := req.URL.Query().Get("label")
-		fmt.Printf("Resetting metrics for %s.%s\n", metricName, labelName)
+		log.Printf("Resetting metrics for %s.%s\n", metricName, labelName)
 
 		ExplodingLabelGauge.WithLabelValues(metricName, labelName).Set(float64(0.))
 	})

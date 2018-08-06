@@ -179,3 +179,26 @@ type HTTPClientConfig struct {
 	// TLSConfig to use to connect to the targets.
 	TLSConfig TLSConfig `yaml:"tls_config,omitempty"`
 }
+
+// RecordingRuleInConfig checks for the existence of a desired filename in the rule_files
+// list of a Prometheus config
+func RecordingRuleInConfig(cfg Config, filename string) bool {
+	for _, f := range cfg.RuleFiles {
+		if f == filename {
+			return true
+		}
+	}
+	return false
+}
+
+// FindRelabelConfigInScrapeConfig checks for the existence of a desired relabel config
+// in a Prometheus scrape config, and returns its index if found, else -1
+func FindRelabelConfigInScrapeConfig(encodedRule string, scrapeConfig ScrapeConfig) int {
+	for i, relabelConfig := range scrapeConfig.MetricRelabelConfigs {
+		if relabelConfig.Encode() == encodedRule {
+			return i
+		}
+	}
+
+	return -1
+}

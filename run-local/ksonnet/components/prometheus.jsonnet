@@ -47,6 +47,11 @@ local bombSquadContainer =
       mountPath: '/etc/config/bomb-squad',
       readOnly: false,
     },
+    {
+      name: 'prom-cfg',
+      mountPath: '/etc/config',
+      readOnly: true,
+    },
   ]);
 
 local appDeployment =

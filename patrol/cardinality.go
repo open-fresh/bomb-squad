@@ -28,9 +28,13 @@ var (
 // label within a single metric's collection of series
 type labelTracker map[string]mapset.Set
 
-func (p *Patrol) getTopCardinalities() error {
-	var highCardSeries []promcfg.HighCardSeries
-	var newRulesInserted = false
+func (p *Patrol) getTopCardinalities(filename string) error {
+	var (
+		highCardSeries   []promcfg.HighCardSeries
+		newRulesInserted = false
+		mrcs             []promcfg.RelabelConfig
+		newPromConfig    promcfg.Config
+	)
 	urlString := fmt.Sprintf("http://%s/api/v1/query?query=topk(%d,delta(card_count[1m]))", p.PromURL, p.HighCardN)
 
 	b, err := prom.Fetch(urlString, p.Client)
@@ -52,23 +56,61 @@ func (p *Patrol) getTopCardinalities() error {
 	for _, s := range highCardSeries {
 		mrc := promcfg.GenerateMetricRelabelConfig(s)
 		mrc.ReUnmarshal()
+		newPromConfig = p.InsertMetricRelabelConfigToPromConfig(mrc, &newRulesInserted)
 
-		newPromConfig := p.InsertMetricRelabelConfigToPromConfig(mrc, &newRulesInserted)
-
-		err := p.ConfigMap.Update(p.Ctx, newPromConfig)
-		if err != nil {
-			log.Fatal(err)
+		// Don't churn on ConfigMap updates
+		if newRulesInserted {
+			err := p.ConfigMap.Update(p.Ctx, newPromConfig)
+			if err != nil {
+				log.Fatal(err)
+			}
+			p.StoreMetricRelabelConfigBombSquad(s, mrc)
 		}
 
-		p.StoreMetricRelabelConfigBombSquad(s, mrc)
+		// Store metric relabel config structs for use in config reload validation later
+		mrcs = append(mrcs, mrc)
 	}
 
-	// Don't reload Prometheus config over and over, it's unnecessary
+	// Don't churn on Prometheus config reloads
 	if newRulesInserted {
-		_ = prom.ReloadConfig(*p.Client)
+		log.Println("Waiting for silencing rules to be present on disk...")
+		rulesFoundOnDisk := false
+		for i := 0; i < 60; i++ {
+			found := p.findRelabelsOnDisk(mrcs, filename)
+
+			if found.Cardinality() == len(mrcs) {
+				err := prom.ReloadConfig(*p.Client)
+				if err != nil {
+					log.Fatal(err)
+				}
+				rulesFoundOnDisk = true
+				break
+			}
+			time.Sleep(2 * time.Second)
+		}
+		if !rulesFoundOnDisk {
+			log.Println("Silencing rules not found on disk after 60s, skipping config reload. Silencing will NOT take place at this time")
+		}
 	}
 
 	return nil
+}
+
+func (p *Patrol) watchForSilencingRulesOnDisk(mrcs []promcfg.RelabelConfig, filename string) {
+}
+
+func (p *Patrol) findRelabelsOnDisk(mrcs []promcfg.RelabelConfig, filename string) mapset.Set {
+	found := mapset.NewSet()
+	cfg := prom.GetPrometheusConfigFromDisk(filename)
+	for _, mrc := range mrcs {
+		mrcHash := mrc.Encode()
+		for _, scrapeConfig := range cfg.ScrapeConfigs {
+			if promcfg.FindRelabelConfigInScrapeConfig(mrcHash, *scrapeConfig) != -1 {
+				found.Add(mrcHash)
+			}
+		}
+	}
+	return found
 }
 
 func (p *Patrol) cardinalityTooHigh(iq *prom.InstantQuery) []string {
@@ -192,7 +234,7 @@ func (p *Patrol) findHighCardSeries(metrics []string) []promcfg.HighCardSeries {
 				HighCardLabelName: hwmLabel,
 			},
 		)
-		fmt.Printf("Detected exploding label \"%s\" on metric \"%s\"\n", hwmLabel, metricName)
+		log.Printf("Detected exploding label \"%s\" on metric \"%s\"\n", hwmLabel, metricName)
 		ExplodingLabelGauge.WithLabelValues(metricName, hwmLabel).Set(float64(hwm))
 	}
 
