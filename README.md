@@ -2,6 +2,18 @@
 
 Bomb Squad is a sidecar to Kubernetes-deployed Prometheus instances that detects and suppresses cardinality explosions. It is a tool intended to bring operational stability and greater visibility in times of rapid cardinality inflation, keeping your Prometheus instances online and usable while providing clear indications that something is trying to blow up.
 
+## Status
+Bomb Squad is currently an **alpha** project, with a few caveats of which you should be aware:
+* It is currently very Kubernetes-centric in implementation, though not conceptually
+* It is currently quite limited in how many Prometheus configurations it can support, as it's non-trivial to vendor Prometheus' `config` package (doing so naively will pull in _all_ of the service discovery vendor code, which hurts).
+  * For now, only static scrape jobs and Kubernetes service discovery configs are supported
+  * Any other service discovery configuration will be rendered incorrectly upon writing the configuration back to the ConfigMap
+* There have been some assumptions made for the sake of solving specific problems, which we intend to refactor properly and make more broadly applicable
+* For now, it can only one class of cardinality explosion (exploding label _values_), while there are at least two more classes that we'd love to support:
+  * Exploding label _names_
+  * Exploding _metric_ names
+* PRs and issues are welcome!
+
 ## Suppressing the what now?
 You might find now and again that one or more of your Prometheus scrape targets begins to expose some manner of super high-cardinality data as metric labels. Prometheus is awesome at handling "typical" high-cardinality behavior:
 * Normal pod churn from Kubernetes
