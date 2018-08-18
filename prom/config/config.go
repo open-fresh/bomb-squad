@@ -100,6 +100,14 @@ func (rc *RelabelConfig) Encode() string {
 	return base64.StdEncoding.EncodeToString([]byte(s))
 }
 
+func (rc *RelabelConfig) String() string {
+	b, err := yaml.Marshal(rc)
+	if err != nil {
+		log.Fatalf("Could not marshal RelabelConfig: %s\n", err)
+	}
+	return string(b)
+}
+
 func ConfigGetRuleFiles() []string {
 	return []string{"nope", "not yet"}
 }

@@ -1,0 +1,74 @@
+version: 2
+
+# https://circleci.com/blog/circleci-hacks-reuse-yaml-in-your-circleci-config-with-yaml/
+defaults: &defaults
+  docker:
+    - image: circleci/golang:1.10
+  working_directory: /go/src/github.com/Fresh-Tracks/bomb-squad
+
+workflows:
+  version: 2
+  test-build-deploy:
+    jobs:
+    - test
+    - build:
+        requires:
+          - test
+    - publish:
+        requires:
+        - build
+        - test
+        filters:
+          branches:
+            only:
+              - master
+
+jobs:
+  test:
+    <<: *defaults
+    steps:
+    - checkout
+    - run:
+        name: Test
+        command: go test ./...
+
+  build:
+    <<: *defaults
+    steps:
+    - checkout
+    - setup_remote_docker
+
+    - run:
+        name: Build
+        command: make
+    - run: 
+        name: Docker Save
+        command: |
+          mkdir -p docker-cache && \
+          export SHORT_SHA=$(echo $CIRCLE_SHA1 | cut -c -7) && \
+          docker save -o docker-cache/bs-image.tar bomb-squad:$SHORT_SHA
+    - persist_to_workspace:
+        root: docker-cache
+        paths: bs-image.tar
+
+  publish:
+    <<: *defaults
+    steps:
+    - checkout
+    - setup_remote_docker
+
+    - attach_workspace:
+        at: docker-cache
+
+    - run:
+        name: Load Image
+        command: docker load < docker-cache/bs-image.tar
+
+    - run:
+        name: Tag and Push Image
+        command: |
+          export SHORT_SHA=$(echo $CIRCLE_SHA1 | cut -c -7) && \
+          echo $SHORT_SHA && \
+          docker login quay.io -u "${QUAY_USERNAME}" -p "${QUAY_PASSWORD}" && \
+          docker tag bomb-squad:$SHORT_SHA quay.io/freshtracks.io/bomb-squad:$SHORT_SHA && \
+          docker push quay.io/freshtracks.io/bomb-squad:$SHORT_SHA

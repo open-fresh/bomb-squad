@@ -1,4 +1,6 @@
 # Bomb Squad: Suppressing Prometheus Cardinality Explosions
+[![CircleCI](https://circleci.com/gh/Fresh-Tracks/bomb-squad.svg?style=svg)](https://circleci.com/gh/Fresh-Tracks/bomb-squad)
+[![Docker Repository on Quay](https://quay.io/repository/freshtracks.io/bomb-squad/status "Docker Repository on Quay")](https://quay.io/repository/freshtracks.io/bomb-squad)
 
 Bomb Squad is a sidecar to Kubernetes-deployed Prometheus instances that detects and suppresses cardinality explosions. It is a tool intended to bring operational stability and greater visibility in times of rapid cardinality inflation, keeping your Prometheus instances online and usable while providing clear indications that something is trying to blow up.
 

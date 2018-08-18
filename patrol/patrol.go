@@ -126,7 +126,7 @@ func resetMetric(metricName, labelName string) {
 
 	_, err := client.Do(req)
 	if err != nil {
-		log.Println("Failed to reset metric for %s.%s. Not urgent - continuing.", err)
+		log.Printf("Failed to reset metric for %s.%s: %s. Not urgent - continuing.", metricName, labelName, err)
 	}
 }
 
