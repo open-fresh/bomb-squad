@@ -19,6 +19,14 @@ BOMB_SQUAD_FILES := $(shell find $(BOMB_SQUAD_DIR) -type f -name '*.go' -print)
 
 IMAGE_NAME := gcr.io/freshtracks-io/bomb-squad:$(SHORT_SHA)
 
+vendor/vendor.json:
+	govendor init
+
+vendor: vendor/vendor.json
+	govendor add +outside
+	govendor update +outside
+	govendor remove +unused
+
 version:
 	@echo PROMETHEUS: $(PROM_VERSION)
 	@echo PROMETHEUS RULES: $(PROM_RULES_VERSION)

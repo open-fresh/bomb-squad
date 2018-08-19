@@ -3,6 +3,48 @@
 	"ignore": "test",
 	"package": [
 		{
+			"checksumSHA1": "MqXMSFkX3ZDJTYDaTYXoNAPgQyY=",
+			"path": "github.com/Fresh-Tracks/bomb-squad",
+			"revision": "8b745a48f2f0119305d14dedccfe6e7bde70a953",
+			"revisionTime": "2018-08-19T20:10:15Z"
+		},
+		{
+			"checksumSHA1": "razV+hZmM8HaSDgBebbWyv4DXMk=",
+			"path": "github.com/Fresh-Tracks/bomb-squad/k8s/configmap",
+			"revision": "8b745a48f2f0119305d14dedccfe6e7bde70a953",
+			"revisionTime": "2018-08-19T20:10:15Z"
+		},
+		{
+			"checksumSHA1": "Qis+tAgeyTrowiDrlrzmbCbrL/U=",
+			"path": "github.com/Fresh-Tracks/bomb-squad/patrol",
+			"revision": "8b745a48f2f0119305d14dedccfe6e7bde70a953",
+			"revisionTime": "2018-08-19T20:10:15Z"
+		},
+		{
+			"checksumSHA1": "VhIfSr7+sGwf7FOrPsjzThGq7Rc=",
+			"path": "github.com/Fresh-Tracks/bomb-squad/prom",
+			"revision": "8b745a48f2f0119305d14dedccfe6e7bde70a953",
+			"revisionTime": "2018-08-19T20:10:15Z"
+		},
+		{
+			"checksumSHA1": "/SVnXBd7kPU3Jsguh6MCM+Aj3r4=",
+			"path": "github.com/Fresh-Tracks/bomb-squad/prom/config",
+			"revision": "8b745a48f2f0119305d14dedccfe6e7bde70a953",
+			"revisionTime": "2018-08-19T20:10:15Z"
+		},
+		{
+			"checksumSHA1": "pPyyu88OZnEBC3jmQ7rBANgHRjc=",
+			"path": "github.com/Fresh-Tracks/bomb-squad/run-local/statspitter",
+			"revision": "8b745a48f2f0119305d14dedccfe6e7bde70a953",
+			"revisionTime": "2018-08-19T20:10:15Z"
+		},
+		{
+			"checksumSHA1": "vpH3TK7GBx4vlCHObXguVjLCn0A=",
+			"path": "github.com/Fresh-Tracks/bomb-squad/util",
+			"revision": "8b745a48f2f0119305d14dedccfe6e7bde70a953",
+			"revisionTime": "2018-08-19T20:10:15Z"
+		},
+		{
 			"checksumSHA1": "spyv5/YFBjYyZLZa1U2LBfDR8PM=",
 			"path": "github.com/beorn7/perks/quantile",
 			"revision": "4c0e84591b9aa9e6dcfdf3e020114cd81f89d5f9",
