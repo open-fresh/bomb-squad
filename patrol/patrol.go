@@ -5,13 +5,16 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"strings"
 	"time"
 
-	configmap "github.com/Fresh-Tracks/bomb-squad/k8s/configmap"
+	"github.com/Fresh-Tracks/bomb-squad/k8s/configmap"
 	"github.com/Fresh-Tracks/bomb-squad/prom"
-	promcfg "github.com/Fresh-Tracks/bomb-squad/prom/config"
 	"github.com/Fresh-Tracks/bomb-squad/util"
+
+	promcfg "github.com/Fresh-Tracks/bomb-squad/prom/config"
+
 	yaml "gopkg.in/yaml.v2"
 )
 
@@ -20,7 +23,7 @@ var (
 )
 
 type Patrol struct {
-	PromURL           string
+	PromURL           *url.URL
 	Interval          time.Duration
 	HighCardN         int
 	HighCardThreshold float64
@@ -37,8 +40,8 @@ type BombSquadMetricConfig struct {
 }
 
 func (p *Patrol) Run() {
-	ticker := time.NewTicker(time.Duration(p.Interval) * time.Second)
-	for _ = range ticker.C {
+	ticker := time.NewTicker(p.Interval)
+	for range ticker.C {
 		err := p.getTopCardinalities()
 		if err != nil {
 			log.Fatal(err)
@@ -66,7 +69,7 @@ func (p *Patrol) GetBombSquadConfig() BombSquadMetricConfig {
 func (p *Patrol) ListSuppressedMetrics() {
 	b := p.GetBombSquadConfig()
 	for metric, labels := range b.SuppressedMetrics {
-		for label, _ := range labels {
+		for label := range labels {
 			fmt.Printf("%s.%s\n", metric, label)
 		}
 	}
@@ -121,6 +124,7 @@ func (p *Patrol) RemoveSilence(label string) error {
 
 func resetMetric(metricName, labelName string) {
 	client, _ := util.HttpClient()
+	// What is this localhost 8080?
 	endpt := fmt.Sprintf("http://localhost:8080/metrics/reset?metric=%s&label=%s", metricName, labelName)
 	req, _ := http.NewRequest("GET", endpt, nil)
 

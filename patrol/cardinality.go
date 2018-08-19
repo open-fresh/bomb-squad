@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net/url"
 	"strconv"
 	"time"
 
@@ -30,11 +31,21 @@ type labelTracker map[string]mapset.Set
 
 func (p *Patrol) getTopCardinalities() error {
 	var highCardSeries []promcfg.HighCardSeries
-	urlString := fmt.Sprintf("http://%s/api/v1/query?query=topk(%d,delta(card_count[1m]))", p.PromURL, p.HighCardN)
 
-	b, err := prom.Fetch(urlString, p.Client)
+	relativeURL, err := url.Parse("/api/v1/query")
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to parse relative api v1 query path: %s", err)
+	}
+
+	query := p.PromURL.Query()
+	query.Set("query", fmt.Sprintf("topk(%d,delta(card_count[1m]))", p.HighCardN))
+	relativeURL.RawQuery = query.Encode()
+
+	queryURL := p.PromURL.ResolveReference(relativeURL)
+
+	b, err := prom.Fetch(queryURL.String(), p.Client)
+	if err != nil {
+		return fmt.Errorf("failed to fetch query from prometheus: %s", err)
 	}
 
 	iq := &prom.InstantQuery{}
