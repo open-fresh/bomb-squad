@@ -23,10 +23,11 @@ vendor/vendor.json:
 	govendor init
 
 vendor: vendor/vendor.json
-	govendor add +outside
-	govendor update +outside
-	govendor remove +unused
+	govendor add +external
+	govendor update +external
 
+unused: vendor/vendor.json
+	govendor list +unused
 version:
 	@echo PROMETHEUS: $(PROM_VERSION)
 	@echo PROMETHEUS RULES: $(PROM_RULES_VERSION)
