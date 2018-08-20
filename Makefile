@@ -1,6 +1,5 @@
 .PHONY: clean version help run-bomb-squad images
 .DEFAULT_GOAL=all
-#.NOTPARALLEL: deps
 
 GOCMD=go
 GOBUILD = $(GOCMD) build
@@ -20,11 +19,13 @@ BOMB_SQUAD_FILES := $(shell find $(BOMB_SQUAD_DIR) -type f -name '*.go' -print)
 
 IMAGE_NAME := gcr.io/freshtracks-io/bomb-squad:$(SHORT_SHA)
 
-#Gopkg.lock: Gopkg.toml
-#	dep ensure
-#	@touch Gopkg.lock
-#
-#deps: Gopkg.lock ## Ensure the dependencies are up-to-date
+vendor/vendor.json:
+	govendor init
+
+vendor: vendor/vendor.json
+	govendor add +outside
+	govendor update +outside
+	govendor remove +unused
 
 version:
 	@echo PROMETHEUS: $(PROM_VERSION)

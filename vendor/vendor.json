@@ -1,0 +1,241 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "MqXMSFkX3ZDJTYDaTYXoNAPgQyY=",
+			"path": "github.com/Fresh-Tracks/bomb-squad",
+			"revision": "8b745a48f2f0119305d14dedccfe6e7bde70a953",
+			"revisionTime": "2018-08-19T20:10:15Z"
+		},
+		{
+			"checksumSHA1": "razV+hZmM8HaSDgBebbWyv4DXMk=",
+			"path": "github.com/Fresh-Tracks/bomb-squad/k8s/configmap",
+			"revision": "8b745a48f2f0119305d14dedccfe6e7bde70a953",
+			"revisionTime": "2018-08-19T20:10:15Z"
+		},
+		{
+			"checksumSHA1": "Qis+tAgeyTrowiDrlrzmbCbrL/U=",
+			"path": "github.com/Fresh-Tracks/bomb-squad/patrol",
+			"revision": "8b745a48f2f0119305d14dedccfe6e7bde70a953",
+			"revisionTime": "2018-08-19T20:10:15Z"
+		},
+		{
+			"checksumSHA1": "VhIfSr7+sGwf7FOrPsjzThGq7Rc=",
+			"path": "github.com/Fresh-Tracks/bomb-squad/prom",
+			"revision": "8b745a48f2f0119305d14dedccfe6e7bde70a953",
+			"revisionTime": "2018-08-19T20:10:15Z"
+		},
+		{
+			"checksumSHA1": "/SVnXBd7kPU3Jsguh6MCM+Aj3r4=",
+			"path": "github.com/Fresh-Tracks/bomb-squad/prom/config",
+			"revision": "8b745a48f2f0119305d14dedccfe6e7bde70a953",
+			"revisionTime": "2018-08-19T20:10:15Z"
+		},
+		{
+			"checksumSHA1": "pPyyu88OZnEBC3jmQ7rBANgHRjc=",
+			"path": "github.com/Fresh-Tracks/bomb-squad/run-local/statspitter",
+			"revision": "8b745a48f2f0119305d14dedccfe6e7bde70a953",
+			"revisionTime": "2018-08-19T20:10:15Z"
+		},
+		{
+			"checksumSHA1": "vpH3TK7GBx4vlCHObXguVjLCn0A=",
+			"path": "github.com/Fresh-Tracks/bomb-squad/util",
+			"revision": "8b745a48f2f0119305d14dedccfe6e7bde70a953",
+			"revisionTime": "2018-08-19T20:10:15Z"
+		},
+		{
+			"checksumSHA1": "spyv5/YFBjYyZLZa1U2LBfDR8PM=",
+			"path": "github.com/beorn7/perks/quantile",
+			"revision": "4c0e84591b9aa9e6dcfdf3e020114cd81f89d5f9",
+			"revisionTime": "2016-08-04T10:47:26Z"
+		},
+		{
+			"checksumSHA1": "rr/zs3DQ0aK/djbzuKdD0YIj038=",
+			"path": "github.com/deckarep/golang-set",
+			"revision": "b87793d5def971edc55ea88175fa32430e940e01",
+			"revisionTime": "2018-03-28T15:30:22Z"
+		},
+		{
+			"checksumSHA1": "d/ckgctLC2JI8v9IVCD1nzwMCxc=",
+			"path": "github.com/ericchiang/k8s",
+			"revision": "c9d9831128d3528f37157d7c96765033ed0a9b3b",
+			"revisionTime": "2018-06-06T17:57:49Z"
+		},
+		{
+			"checksumSHA1": "cxdskWaHbixHV6kP4XIkhHneYOI=",
+			"path": "github.com/ericchiang/k8s/apis/apiextensions/v1beta1",
+			"revision": "c9d9831128d3528f37157d7c96765033ed0a9b3b",
+			"revisionTime": "2018-06-06T17:57:49Z"
+		},
+		{
+			"checksumSHA1": "jlmdOx3uTUp3vgBrXjqYc28OoXA=",
+			"path": "github.com/ericchiang/k8s/apis/core/v1",
+			"revision": "c9d9831128d3528f37157d7c96765033ed0a9b3b",
+			"revisionTime": "2018-06-06T17:57:49Z"
+		},
+		{
+			"checksumSHA1": "fBP09m6drsy/tbjTYCtRDK+yFPU=",
+			"path": "github.com/ericchiang/k8s/apis/meta/v1",
+			"revision": "c9d9831128d3528f37157d7c96765033ed0a9b3b",
+			"revisionTime": "2018-06-06T17:57:49Z"
+		},
+		{
+			"checksumSHA1": "JirJkoeIkWJRNrbprsQvqwisxds=",
+			"path": "github.com/ericchiang/k8s/apis/resource",
+			"revision": "c9d9831128d3528f37157d7c96765033ed0a9b3b",
+			"revisionTime": "2018-06-06T17:57:49Z"
+		},
+		{
+			"checksumSHA1": "Su6wSR8V8HL2QZsF8icJ0R9AFq8=",
+			"path": "github.com/ericchiang/k8s/runtime",
+			"revision": "c9d9831128d3528f37157d7c96765033ed0a9b3b",
+			"revisionTime": "2018-06-06T17:57:49Z"
+		},
+		{
+			"checksumSHA1": "8ETrRvIaXPfD21N7fa8kdbumL00=",
+			"path": "github.com/ericchiang/k8s/runtime/schema",
+			"revision": "c9d9831128d3528f37157d7c96765033ed0a9b3b",
+			"revisionTime": "2018-06-06T17:57:49Z"
+		},
+		{
+			"checksumSHA1": "cMk3HE8/81ExHuEs0F5sZCclOFs=",
+			"path": "github.com/ericchiang/k8s/util/intstr",
+			"revision": "c9d9831128d3528f37157d7c96765033ed0a9b3b",
+			"revisionTime": "2018-06-06T17:57:49Z"
+		},
+		{
+			"checksumSHA1": "fobEKiMk5D7IGvCSwh4HdG1o98c=",
+			"path": "github.com/ericchiang/k8s/watch/versioned",
+			"revision": "c9d9831128d3528f37157d7c96765033ed0a9b3b",
+			"revisionTime": "2018-06-06T17:57:49Z"
+		},
+		{
+			"checksumSHA1": "WX1+2gktHcBmE9MGwFSGs7oqexU=",
+			"path": "github.com/golang/protobuf/proto",
+			"revision": "bbd03ef6da3a115852eaf24c8a1c46aeb39aa175",
+			"revisionTime": "2018-02-02T18:43:18Z"
+		},
+		{
+			"checksumSHA1": "bKMZjd2wPw13VwoE7mBeSv5djFA=",
+			"path": "github.com/matttproud/golang_protobuf_extensions/pbutil",
+			"revision": "c12348ce28de40eed0136aa2b644d0ee0650e56c",
+			"revisionTime": "2016-04-24T11:30:07Z"
+		},
+		{
+			"checksumSHA1": "WVgL9pNO2RZCCcaXfSYSNEPgtCo=",
+			"path": "github.com/prometheus/client_golang/prometheus",
+			"revision": "d6a9817c4afc94d51115e4a30d449056a3fbf547",
+			"revisionTime": "2018-06-29T05:51:34Z"
+		},
+		{
+			"checksumSHA1": "MYqKV5uVTfCxP9zBug7naBQ1vr8=",
+			"path": "github.com/prometheus/client_golang/prometheus/promhttp",
+			"revision": "d6a9817c4afc94d51115e4a30d449056a3fbf547",
+			"revisionTime": "2018-06-29T05:51:34Z"
+		},
+		{
+			"checksumSHA1": "DvwvOlPNAgRntBzt3b3OSRMS2N4=",
+			"path": "github.com/prometheus/client_model/go",
+			"revision": "99fa1f4be8e564e8a6b613da7fa6f46c9edafc6c",
+			"revisionTime": "2017-11-17T10:05:41Z"
+		},
+		{
+			"checksumSHA1": "vPdC/DzEm7YbzRir2wwnpLPfay8=",
+			"path": "github.com/prometheus/common/expfmt",
+			"revision": "7600349dcfe1abd18d72d3a1770870d9800a7801",
+			"revisionTime": "2018-05-18T15:47:59Z"
+		},
+		{
+			"checksumSHA1": "GWlM3d2vPYyNATtTFgftS10/A9w=",
+			"path": "github.com/prometheus/common/internal/bitbucket.org/ww/goautoneg",
+			"revision": "7600349dcfe1abd18d72d3a1770870d9800a7801",
+			"revisionTime": "2018-05-18T15:47:59Z"
+		},
+		{
+			"checksumSHA1": "EXTRY7DL9gFW8c341Dk6LDXCBn8=",
+			"path": "github.com/prometheus/common/model",
+			"revision": "7600349dcfe1abd18d72d3a1770870d9800a7801",
+			"revisionTime": "2018-05-18T15:47:59Z"
+		},
+		{
+			"checksumSHA1": "jo/zxF+Pfj5yZjReTKGOACq9IBs=",
+			"path": "github.com/prometheus/procfs",
+			"revision": "ae68e2d4c00fed4943b5f6698d504a5fe083da8a",
+			"revisionTime": "2018-07-05T12:18:52Z"
+		},
+		{
+			"checksumSHA1": "lv9rIcjbVEGo8AT1UCUZXhXrfQc=",
+			"path": "github.com/prometheus/procfs/internal/util",
+			"revision": "ae68e2d4c00fed4943b5f6698d504a5fe083da8a",
+			"revisionTime": "2018-07-05T12:18:52Z"
+		},
+		{
+			"checksumSHA1": "HSP5hVT0CNMRa8+Xtz4z2Ic5U0E=",
+			"path": "github.com/prometheus/procfs/nfs",
+			"revision": "ae68e2d4c00fed4943b5f6698d504a5fe083da8a",
+			"revisionTime": "2018-07-05T12:18:52Z"
+		},
+		{
+			"checksumSHA1": "yItvTQLUVqm/ArLEbvEhqG0T5a0=",
+			"path": "github.com/prometheus/procfs/xfs",
+			"revision": "ae68e2d4c00fed4943b5f6698d504a5fe083da8a",
+			"revisionTime": "2018-07-05T12:18:52Z"
+		},
+		{
+			"checksumSHA1": "uL4gYOb0zwNKV0/2r/Wt8r3mwvE=",
+			"path": "golang.org/x/net/http2",
+			"revision": "f5dfe339be1d06f81b22525fe34671ee7d2c8904",
+			"revisionTime": "2018-02-04T03:50:36Z"
+		},
+		{
+			"checksumSHA1": "ezWhc7n/FtqkLDQKeU2JbW+80tE=",
+			"path": "golang.org/x/net/http2/hpack",
+			"revision": "f5dfe339be1d06f81b22525fe34671ee7d2c8904",
+			"revisionTime": "2018-02-04T03:50:36Z"
+		},
+		{
+			"checksumSHA1": "RcrB7tgYS/GMW4QrwVdMOTNqIU8=",
+			"path": "golang.org/x/net/idna",
+			"revision": "f5dfe339be1d06f81b22525fe34671ee7d2c8904",
+			"revisionTime": "2018-02-04T03:50:36Z"
+		},
+		{
+			"checksumSHA1": "3xyuaSNmClqG4YWC7g0isQIbUTc=",
+			"path": "golang.org/x/net/lex/httplex",
+			"revision": "f5dfe339be1d06f81b22525fe34671ee7d2c8904",
+			"revisionTime": "2018-02-04T03:50:36Z"
+		},
+		{
+			"checksumSHA1": "CbpjEkkOeh0fdM/V8xKDdI0AA88=",
+			"path": "golang.org/x/text/secure/bidirule",
+			"revision": "4e4a3210bb54bb31f6ab2cdca2edcc0b50c420c1",
+			"revisionTime": "2018-02-04T03:07:25Z"
+		},
+		{
+			"checksumSHA1": "ziMb9+ANGRJSSIuxYdRbA+cDRBQ=",
+			"path": "golang.org/x/text/transform",
+			"revision": "4e4a3210bb54bb31f6ab2cdca2edcc0b50c420c1",
+			"revisionTime": "2018-02-04T03:07:25Z"
+		},
+		{
+			"checksumSHA1": "w8kDfZ1Ug+qAcVU0v8obbu3aDOY=",
+			"path": "golang.org/x/text/unicode/bidi",
+			"revision": "4e4a3210bb54bb31f6ab2cdca2edcc0b50c420c1",
+			"revisionTime": "2018-02-04T03:07:25Z"
+		},
+		{
+			"checksumSHA1": "BCNYmf4Ek93G4lk5x3ucNi/lTwA=",
+			"path": "golang.org/x/text/unicode/norm",
+			"revision": "4e4a3210bb54bb31f6ab2cdca2edcc0b50c420c1",
+			"revisionTime": "2018-02-04T03:07:25Z"
+		},
+		{
+			"checksumSHA1": "RDJpJQwkF012L6m/2BJizyOksNw=",
+			"path": "gopkg.in/yaml.v2",
+			"revision": "eb3733d160e74a9c7e442f435eb3bea458e1d19f",
+			"revisionTime": "2017-08-12T16:00:11Z"
+		}
+	],
+	"rootPath": "github.com/Fresh-Tracks/bomb-squad"
+}
