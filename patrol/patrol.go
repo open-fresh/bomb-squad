@@ -10,8 +10,8 @@ import (
 
 	configmap "github.com/Fresh-Tracks/bomb-squad/k8s/configmap"
 	"github.com/Fresh-Tracks/bomb-squad/prom"
-	promcfg "github.com/Fresh-Tracks/bomb-squad/prom/config"
 	"github.com/Fresh-Tracks/bomb-squad/util"
+	promcfg "github.com/prometheus/prometheus/config"
 	yaml "gopkg.in/yaml.v2"
 )
 
