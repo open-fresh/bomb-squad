@@ -12,6 +12,7 @@ import (
 	promcfg "github.com/Fresh-Tracks/bomb-squad/prom/config"
 	"github.com/deckarep/golang-set"
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/common/model"
 )
 
 var (
@@ -61,7 +62,6 @@ func (p *Patrol) getTopCardinalities() error {
 
 	for _, s := range highCardSeries {
 		mrc := promcfg.GenerateMetricRelabelConfig(s)
-		mrc.ReUnmarshal()
 
 		newPromConfig := p.InsertMetricRelabelConfigToPromConfig(mrc)
 
@@ -194,7 +194,7 @@ func (p *Patrol) findHighCardSeries(metrics []string) []promcfg.HighCardSeries {
 		res = append(res,
 			promcfg.HighCardSeries{
 				MetricName:        metricName,
-				HighCardLabelName: hwmLabel,
+				HighCardLabelName: model.LabelName(hwmLabel),
 			},
 		)
 		fmt.Printf("Detected exploding label \"%s\" on metric \"%s\"\n", hwmLabel, metricName)

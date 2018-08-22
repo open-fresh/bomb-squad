@@ -23,10 +23,11 @@ vendor/vendor.json:
 	govendor init
 
 vendor: vendor/vendor.json
-	govendor add +outside
-	govendor update +outside
-	govendor remove +unused
+	govendor add +external
+	govendor update +external
 
+unused: vendor/vendor.json
+	govendor list +unused
 version:
 	@echo PROMETHEUS: $(PROM_VERSION)
 	@echo PROMETHEUS RULES: $(PROM_RULES_VERSION)
@@ -38,6 +39,8 @@ $(BOMB_SQUAD_UPTODATE): $(BOMB_SQUAD_FILES)
 		--tag $(BOMB_SQUAD_IMG) . \
 		&& touch $(BOMB_SQUAD_UPTODATE)
 
+test:
+	$(GOCMD) test -v ./...
 build: $(BOMB_SQUAD_UPTODATE) ## Docker-based build of relevant exes
 
 bomb-squad: $(BOMB_SQUAD_UPTODATE) ## Build local bomb-squad image

@@ -5,7 +5,7 @@ import (
 	"log"
 
 	configmap "github.com/Fresh-Tracks/bomb-squad/k8s/configmap"
-	promcfg "github.com/Fresh-Tracks/bomb-squad/prom/config"
+	promcfg "github.com/prometheus/prometheus/config"
 	yaml "gopkg.in/yaml.v2"
 )
 

@@ -5,9 +5,9 @@ import (
 	"log"
 	"time"
 
-	promcfg "github.com/Fresh-Tracks/bomb-squad/prom/config"
 	"github.com/ericchiang/k8s"
 	corev1 "github.com/ericchiang/k8s/apis/core/v1"
+	promcfg "github.com/prometheus/prometheus/config"
 	yaml "gopkg.in/yaml.v2"
 )
 

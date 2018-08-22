@@ -11,9 +11,10 @@ import (
 
 	"github.com/Fresh-Tracks/bomb-squad/k8s/configmap"
 	"github.com/Fresh-Tracks/bomb-squad/prom"
+	"github.com/Fresh-Tracks/bomb-squad/prom/config"
 	"github.com/Fresh-Tracks/bomb-squad/util"
 
-	promcfg "github.com/Fresh-Tracks/bomb-squad/prom/config"
+	promcfg "github.com/prometheus/prometheus/config"
 
 	yaml "gopkg.in/yaml.v2"
 )
@@ -134,14 +135,14 @@ func resetMetric(metricName, labelName string) {
 	}
 }
 
-func (p *Patrol) StoreMetricRelabelConfigBombSquad(s promcfg.HighCardSeries, mrc promcfg.RelabelConfig) {
+func (p *Patrol) StoreMetricRelabelConfigBombSquad(s config.HighCardSeries, mrc promcfg.RelabelConfig) {
 	b := p.GetBombSquadConfig()
 	if lc, ok := b.SuppressedMetrics[s.MetricName]; ok {
-		lc[s.HighCardLabelName] = mrc.Encode()
+		lc[string(s.HighCardLabelName)] = config.Encode(mrc)
 	} else {
 		b.SuppressedMetrics[s.MetricName] = lc
 		lc = BombSquadLabelConfig{}
-		lc[s.HighCardLabelName] = mrc.Encode()
+		lc[string(s.HighCardLabelName)] = config.Encode(mrc)
 	}
 
 	res, err := yaml.Marshal(b)
@@ -168,7 +169,7 @@ func DeleteRelabelConfigFromArray(arr []*promcfg.RelabelConfig, index int) []*pr
 
 func (p *Patrol) FindRelabelConfigInScrapeConfig(encodedRule string, scrapeConfig promcfg.ScrapeConfig) int {
 	for i, relabelConfig := range scrapeConfig.MetricRelabelConfigs {
-		if relabelConfig.Encode() == encodedRule {
+		if config.Encode(*relabelConfig) == encodedRule {
 			return i
 		}
 	}
@@ -178,7 +179,7 @@ func (p *Patrol) FindRelabelConfigInScrapeConfig(encodedRule string, scrapeConfi
 
 func (p *Patrol) InsertMetricRelabelConfigToPromConfig(rc promcfg.RelabelConfig) promcfg.Config {
 	promConfig := prom.GetPrometheusConfig(p.Ctx, *p.ConfigMap)
-	rcEncoded := rc.Encode()
+	rcEncoded := config.Encode(rc)
 	for _, scrapeConfig := range promConfig.ScrapeConfigs {
 		if p.FindRelabelConfigInScrapeConfig(rcEncoded, *scrapeConfig) == -1 {
 			fmt.Printf("Did not find necessary silence rule in ScrapeConfig %s, adding now\n", scrapeConfig.JobName)
