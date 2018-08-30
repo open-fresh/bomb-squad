@@ -8,8 +8,8 @@ Bomb Squad is a sidecar to Kubernetes-deployed Prometheus instances that detects
 Bomb Squad is currently an **alpha** project, with a few caveats of which you should be aware:
 * It is currently very Kubernetes-centric in implementation, though not conceptually
 * ~~It is currently quite limited in how many Prometheus configurations it can support, as it's non-trivial to vendor Prometheus' `config` package (doing so naively will pull in _all_ of the service discovery vendor code, which hurts).~~
-  ~~* For now, only static scrape jobs and Kubernetes service discovery configs are supported~~
-  ~~* Any other service discovery configuration will be rendered incorrectly upon writing the configuration back to the ConfigMap~~
+  * ~~For now, only static scrape jobs and Kubernetes service discovery configs are supported~~
+  * ~~Any other service discovery configuration will be rendered incorrectly upon writing the configuration back to the ConfigMap~~
 * There have been some assumptions made for the sake of solving specific problems, which we intend to refactor properly and make more broadly applicable
 * For now, it can only one class of cardinality explosion (exploding label _values_), while there are at least two more classes that we'd love to support:
   * Exploding label _names_
