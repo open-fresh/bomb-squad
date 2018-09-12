@@ -34,9 +34,9 @@ func TestPatrol(t *testing.T) {
 	Must(t, err)
 
 	p := patrol.Patrol{
-		Client:   client,
-		PromURL:  promurl,
-		Interval: 100 * time.Millisecond,
+		HTTPClient: client,
+		PromURL:    promurl,
+		Interval:   100 * time.Millisecond,
 	}
 
 	wg.Add(1)

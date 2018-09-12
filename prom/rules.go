@@ -1,30 +1,21 @@
 package prom
 
 import (
-	"context"
-	"log"
+	"fmt"
 
-	configmap "github.com/Fresh-Tracks/bomb-squad/k8s/configmap"
+	"github.com/Fresh-Tracks/bomb-squad/config"
 	promcfg "github.com/prometheus/prometheus/config"
 	yaml "gopkg.in/yaml.v2"
 )
 
-// GetPrometheusConfig pulls in the full base Prometheus config
-// from the provided ConfigMap. Does not include rules nor AM configs.
-func GetPrometheusConfig(ctx context.Context, c configmap.ConfigMap) promcfg.Config {
-	raw := c.ReadRawData(ctx, c.Key)
-	var cfg promcfg.Config
-	err := yaml.Unmarshal(raw, &cfg)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return cfg
-}
-
 // AppendRuleFile Appends a static rule file that Bomb Squad needs into the
 // array of rule files that may exist in the current Prometheus config
-func AppendRuleFile(ctx context.Context, filename string, c configmap.ConfigMap) error {
-	cfg := GetPrometheusConfig(ctx, c)
+func AppendRuleFile(filename string, c config.Configurator) error {
+	cfg, err := config.ReadPromConfig(c)
+	if err != nil {
+		return err
+	}
+
 	configRuleFiles := cfg.RuleFiles
 	ruleFileFound := false
 
@@ -37,10 +28,26 @@ func AppendRuleFile(ctx context.Context, filename string, c configmap.ConfigMap)
 	if !ruleFileFound {
 		newRuleFiles := append(configRuleFiles, filename)
 		cfg.RuleFiles = newRuleFiles
-		err := c.Update(ctx, cfg)
+		err := config.WritePromConfig(cfg, c)
 		if err != nil {
 			return err
 		}
+	}
+	return nil
+}
+
+// ReUnmarshal simply marshals a RelabelConfig and unmarshals it again back into place.
+// This is needed to accomodate an "expansion", if you will, of the prometheus.config
+// Regexp struct's string representation that happens only upon unmarshalling it.
+// TODO: (TODON'T?) Instead of this, figure out the unmarshalling quirk and change it
+func ReUnmarshal(rc *promcfg.RelabelConfig) error {
+	s, err := yaml.Marshal(rc)
+	if err != nil {
+		return fmt.Errorf("Failed to marshal relabel config: %s", err)
+	}
+	err = yaml.Unmarshal(s, rc)
+	if err != nil {
+		return fmt.Errorf("Failed to re-unmarshal relabel config: %s", err)
 	}
 	return nil
 }

@@ -2,6 +2,9 @@
 .DEFAULT_GOAL=all
 
 GOCMD=go
+GOLINTER=gometalinter
+GOLINTERFLAGSFAST=--deadline=120s --disable=varcheck --disable=structcheck --disable=maligned --disable=megacheck --disable=interfacer --cyclo-over=12
+GOLINTERFLAGSFULL=--deadline=300s
 GOBUILD = $(GOCMD) build
 GOCLEAN = $(GOCMD) clean
 GOTEST = $(GOCMD) test
@@ -22,12 +25,17 @@ IMAGE_NAME := gcr.io/freshtracks-io/bomb-squad:$(SHORT_SHA)
 vendor/vendor.json:
 	govendor init
 
-vendor: vendor/vendor.json
+vendor: vendor/vendor.json vendor/.uptodate
 	govendor add +external
 	govendor update +external
+	touch vendor/vendor.json
 
 unused: vendor/vendor.json
 	govendor list +unused
+
+vendor/.uptodate:
+	@echo "Updating vendored bits..."
+
 version:
 	@echo PROMETHEUS: $(PROM_VERSION)
 	@echo PROMETHEUS RULES: $(PROM_RULES_VERSION)
@@ -41,6 +49,13 @@ $(BOMB_SQUAD_UPTODATE): $(BOMB_SQUAD_FILES)
 
 test:
 	$(GOCMD) test -v ./...
+
+fastlint:
+	$(GOLINTER) $(GOLINTERFLAGSFAST)
+
+lint:
+	$(GOLINTER) $(GOLINTERFLAGSFULL)
+
 build: $(BOMB_SQUAD_UPTODATE) ## Docker-based build of relevant exes
 
 bomb-squad: $(BOMB_SQUAD_UPTODATE) ## Build local bomb-squad image

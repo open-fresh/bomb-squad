@@ -30,7 +30,7 @@ jobs:
     - checkout
     - run:
         name: Test
-        command: go test ./...
+        command: make test
 
   build:
     <<: *defaults
