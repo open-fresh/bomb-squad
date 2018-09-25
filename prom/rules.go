@@ -10,10 +10,10 @@ import (
 
 // AppendRuleFile Appends a static rule file that Bomb Squad needs into the
 // array of rule files that may exist in the current Prometheus config
-func AppendRuleFile(filename string, c config.Configurator) error {
+func AppendRuleFile(filename string, c config.Configurator) (promcfg.Config, error) {
 	cfg, err := config.ReadPromConfig(c)
 	if err != nil {
-		return err
+		return promcfg.Config{}, err
 	}
 
 	configRuleFiles := cfg.RuleFiles
@@ -28,12 +28,8 @@ func AppendRuleFile(filename string, c config.Configurator) error {
 	if !ruleFileFound {
 		newRuleFiles := append(configRuleFiles, filename)
 		cfg.RuleFiles = newRuleFiles
-		err := config.WritePromConfig(cfg, c)
-		if err != nil {
-			return err
-		}
 	}
-	return nil
+	return cfg, nil
 }
 
 // ReUnmarshal simply marshals a RelabelConfig and unmarshals it again back into place.

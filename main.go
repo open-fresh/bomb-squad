@@ -67,7 +67,12 @@ func bootstrap(c config.Configurator) {
 		log.Fatalf("Error writing bootstrap recording rules: %s", err)
 	}
 
-	err = prom.AppendRuleFile("/etc/config/bomb-squad/rules.yaml", c)
+	cfg, err := prom.AppendRuleFile("/etc/config/bomb-squad/rules.yaml", c)
+	if err != nil {
+		log.Fatalf("Error adding bootstrap recording rules to Prometheus config: %s", err)
+	}
+
+	err = config.WritePromConfig(cfg, c)
 	if err != nil {
 		log.Fatalf("Error adding bootstrap recording rules to Prometheus config: %s", err)
 	}
