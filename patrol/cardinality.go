@@ -7,9 +7,9 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/Fresh-Tracks/bomb-squad/config"
-	"github.com/Fresh-Tracks/bomb-squad/prom"
 	"github.com/deckarep/golang-set"
+	"github.com/open-fresh/bomb-squad/config"
+	"github.com/open-fresh/bomb-squad/prom"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/common/model"
 	yaml "gopkg.in/yaml.v2"

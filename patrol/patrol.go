@@ -7,8 +7,8 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/Fresh-Tracks/bomb-squad/config"
-	"github.com/Fresh-Tracks/bomb-squad/prom"
+	"github.com/open-fresh/bomb-squad/config"
+	"github.com/open-fresh/bomb-squad/prom"
 )
 
 var (

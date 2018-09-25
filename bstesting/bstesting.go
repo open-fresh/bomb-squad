@@ -3,7 +3,7 @@ package bstesting
 import (
 	"testing"
 
-	"github.com/Fresh-Tracks/bomb-squad/config"
+	"github.com/open-fresh/bomb-squad/config"
 )
 
 func helperGetConfigFileBytes(t *testing.T, filename string) []byte {

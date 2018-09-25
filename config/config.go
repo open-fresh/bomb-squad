@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/Fresh-Tracks/bomb-squad/util"
+	"github.com/open-fresh/bomb-squad/util"
 	"github.com/prometheus/common/model"
 	promcfg "github.com/prometheus/prometheus/config"
 	yaml "gopkg.in/yaml.v2"

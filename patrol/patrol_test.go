@@ -10,8 +10,8 @@ import (
 	"net/http/httptest"
 	"net/url"
 
-	"github.com/Fresh-Tracks/bomb-squad/patrol"
-	"github.com/Fresh-Tracks/bomb-squad/util"
+	"github.com/open-fresh/bomb-squad/patrol"
+	"github.com/open-fresh/bomb-squad/util"
 )
 
 func TestPatrol(t *testing.T) {

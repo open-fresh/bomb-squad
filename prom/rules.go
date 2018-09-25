@@ -3,7 +3,7 @@ package prom
 import (
 	"fmt"
 
-	"github.com/Fresh-Tracks/bomb-squad/config"
+	"github.com/open-fresh/bomb-squad/config"
 	promcfg "github.com/prometheus/prometheus/config"
 	yaml "gopkg.in/yaml.v2"
 )

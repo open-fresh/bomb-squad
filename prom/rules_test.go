@@ -3,9 +3,9 @@ package prom_test
 import (
 	"testing"
 
-	"github.com/Fresh-Tracks/bomb-squad/bstesting"
-	"github.com/Fresh-Tracks/bomb-squad/config"
-	"github.com/Fresh-Tracks/bomb-squad/prom"
+	"github.com/open-fresh/bomb-squad/bstesting"
+	"github.com/open-fresh/bomb-squad/config"
+	"github.com/open-fresh/bomb-squad/prom"
 	"github.com/stretchr/testify/require"
 )
 
