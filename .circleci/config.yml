@@ -4,7 +4,7 @@ version: 2
 defaults: &defaults
   docker:
     - image: circleci/golang:1.10
-  working_directory: /go/src/github.com/Fresh-Tracks/bomb-squad
+  working_directory: /go/src/github.com/open-fresh/bomb-squad
 
 workflows:
   version: 2
