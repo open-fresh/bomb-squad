@@ -157,6 +157,6 @@ func main() {
 	}
 
 	fmt.Println("Welcome to bomb-squad")
-	log.Println("serving prometheus endpoints on port 8080")
+	log.Printf("serving prometheus endpoints on port %d\n",*metricsPort)
 	log.Fatal(server.ListenAndServe())
 }
